@@ -26,7 +26,7 @@ public class TimeManager : MonoBehaviour
     {
         if(IsRunning){
             timeAccumulator += Time.deltaTime * TimeSpeed;
-            if(CurrentTime >= 3f){
+            if(CurrentTime >= 30f){
                 EndInspection();
             }
         }
