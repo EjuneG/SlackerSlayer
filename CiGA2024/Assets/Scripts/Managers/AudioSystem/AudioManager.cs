@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    public AudioSource audioSource;
+    public AudioSource SFXAudioSource;
+    public AudioSource MusicAudioSource;
     private float masterVolume = 1f;
+
+    [SerializeField] private Sound BGM;
 
     private void Awake()
     {
@@ -25,14 +29,42 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    
+    void Start(){
+        BGM.Play();
+    }
 
     public void PlayClip(AudioClip clip, float volume = 1f, float pitch = 1f)
     {
         if (clip != null)
         {
-            audioSource.pitch = pitch;
-            audioSource.PlayOneShot(clip, volume * masterVolume);
+            SFXAudioSource.pitch = pitch;
+            SFXAudioSource.PlayOneShot(clip, volume * masterVolume);
         }
+    }
+
+    public void PauseClip(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            SFXAudioSource.Pause();
+        }
+    }
+
+    public void PlayBGM(AudioClip clip, float volume = 1f, float pitch = 1f)
+    {
+        if (clip != null)
+        {
+            MusicAudioSource.pitch = pitch;
+            MusicAudioSource.volume = volume * masterVolume;
+            MusicAudioSource.clip = clip;
+            MusicAudioSource.Play();
+        }
+    }
+
+    public void StopBGM()
+    {
+        MusicAudioSource.Stop();
     }
 
     public void SetMasterVolume(float volume)

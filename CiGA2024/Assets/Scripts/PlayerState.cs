@@ -29,6 +29,9 @@ public class PlayerState : MonoBehaviour
             UnleashedLimits.Add(limit);
         }
     }
+
+    public float Hatred;
+    public int TotalMoney;
 }
 
 public enum UnleashedLimit{

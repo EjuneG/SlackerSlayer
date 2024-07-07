@@ -14,4 +14,8 @@ public class Sound : MonoBehaviour
     {
         AudioManager.Instance.PlayClip(audioClip, volume, pitch);
     }
+
+    public void Pause(){
+        AudioManager.Instance.PauseClip(audioClip);
+    }
 }

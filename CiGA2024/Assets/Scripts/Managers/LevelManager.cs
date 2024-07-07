@@ -24,6 +24,11 @@ public class LevelManager : MonoBehaviour
     public List<InspectionLevel> levels; // Assign this in the Inspector
 
     public InspectionLevel CurrentLevel { get; private set; }
+    public int DailyEarnedMoney;
+    public int DailySlackerCaught;
+    public int DailyFalseAlarm;
+    public int DailyPenaltyDueToFalseAlarm;
+    public int DailyPenaltyDueToMissedSlacker;
 
     public void Initialize(){
         foreach(InspectionLevel level in levels){
@@ -32,36 +37,20 @@ public class LevelManager : MonoBehaviour
         
         CurrentLevel = levels[0];
     }
-    public void StartLevel(int levelIndex)
+
+    public void ResetDailyStats(){
+        DailyEarnedMoney = 0;
+        DailySlackerCaught = 0;
+        DailyFalseAlarm = 0;
+    }
+    public void StartDay(int levelIndex)
     {
         TimeManager.Instance.StartTimer();
-        CurrentLevel = levels[levelIndex];
-        CurrentLevel.InspectionScene.LoadScene();
+        ResetDailyStats();
     }
 
-    public void StartCurrentLevel(){
-        StartLevel(CurrentLevel.LevelIndex);
-    }
-
-    public void EndLevel()
+    public void EndDay()
     {
-        CurrentLevel.InspectionScene.CloseScene();
-    }
-
-    public void GoToNextLevel()
-    {
-        EndLevel();
-        if (CurrentLevel != null)
-        {
-            int nextLevelIndex = CurrentLevel.LevelIndex + 1;
-            if (nextLevelIndex < levels.Count)
-            {
-                StartLevel(nextLevelIndex);
-            }
-            else
-            {
-                Debug.Log("no more levels");
-            }
-        }
+        SceneManager.Instance.EndDay();
     }
 }
