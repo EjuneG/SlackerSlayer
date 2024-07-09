@@ -11,7 +11,10 @@ public class AudioManager : MonoBehaviour
     public AudioSource MusicAudioSource;
     private float masterVolume = 1f;
 
-    [SerializeField] private Sound BGM;
+    public Sound BGM;
+    public Sound KeyboardBGM;
+    public Sound ReceiveInfoSFX;
+    public Sound ButtonClickSFX;
 
     private void Awake()
     {
@@ -29,10 +32,6 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
-    void Start(){
-        BGM.Play();
-    }
 
     public void PlayClip(AudioClip clip, float volume = 1f, float pitch = 1f)
     {
@@ -49,6 +48,14 @@ public class AudioManager : MonoBehaviour
         {
             SFXAudioSource.Pause();
         }
+    }
+
+    public bool IsBGMPlaying(){
+        return MusicAudioSource.isPlaying;
+    }
+
+    public bool IsBGMPlayingClip(AudioClip clip){
+        return MusicAudioSource.clip == clip && MusicAudioSource.isPlaying;
     }
 
     public void PlayBGM(AudioClip clip, float volume = 1f, float pitch = 1f)

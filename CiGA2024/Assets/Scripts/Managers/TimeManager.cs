@@ -5,6 +5,7 @@ using UnityEngine;
 public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance { get; private set; }
+    public SlackWarning slackWarning;
     void Awake()
     {
         if (Instance == null)
@@ -17,54 +18,92 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    public bool IsRunning {get; private set;}
+    public bool IsRunning { get; private set; }
     [SerializeField] public float TimeSpeed = 1f;
     float timeAccumulator = 0f;
-    int dayOfTheWeek = 1; // 1 = Monday, 2 = Tuesday, ..., 7 = Sunday
-    int month;
+    float inactivityTimer = 0f;
+    public float inactivityThreshold = 120f;
 
     public GameTime CurrentTime;
     public float InspectionTime => timeAccumulator;
 
-    void Start(){
-        CurrentTime = new GameTime(5, 11, 1, 6, 9, 0);
+    void FixedUpdate()
+    {
+        if (IsRunning)
+        {
+
+        }
     }
     void Update()
     {
-        if(IsRunning){
+        if (IsRunning)
+        {
             timeAccumulator += Time.deltaTime * TimeSpeed;
-            //for each second passed, add 1 minute
-            if(timeAccumulator >= 1f){
+
+            // Handle time progression
+            while (timeAccumulator >= 1f)
+            {
+                timeAccumulator -= 1f;
                 CurrentTime.Minute++;
-                timeAccumulator = 0f;
-                //for each minute passed, add 1 hour
-                if(CurrentTime.Minute >= 60){
+
+                // Handle minute to hour progression
+                if (CurrentTime.Minute >= 60)
+                {
                     CurrentTime.Hour++;
                     CurrentTime.Minute = 0;
                 }
             }
-            if(CurrentTime >= new GameTime(20,0)){
-                //Day Ends
+
+            // Check if the game time has reached the end of the day
+            if (CurrentTime >= new GameTime(20, 0))
+            {
+                // Day Ends
+                StopTimer();
                 LevelManager.Instance.EndDay();
             }
+
+            // Handle player inactivity
+            if (IsPlayerActive())
+            {
+                inactivityTimer = 0f;
+            }
+            else
+            {
+                inactivityTimer += Time.deltaTime * TimeSpeed;
+                if (inactivityTimer >= inactivityThreshold)
+                {
+                    slackWarning.ShowAndClose();
+                    inactivityTimer = 0f;
+                }
+            }
         }
+
+        //while time is running, if player does not do anything for 30 minutes (game), play slack warning
     }
 
-    public void StartTimer(){
+    private bool IsPlayerActive()
+    {
+        //if any key is pressed or mouse clicked, return true
+        return Input.anyKey || Input.GetMouseButtonDown(0);
+    }
+
+    public void StartTimer()
+    {
         IsRunning = true;
     }
 
-    public void StopTimer(){
+    public void StopTimer()
+    {
         IsRunning = false;
     }
 
-    public void Reset(){
-        timeAccumulator = 0f;
+    public void ToNextDay()
+    {
+        CurrentTime.ToNextDay();
     }
-
-    public void EndInspection() {
-        Reset();
-        StopTimer();
-        InspectionManager.Instance.ShowDecisionPanel();
+    public void Reset()
+    {
+        timeAccumulator = 0f;
+        CurrentTime = new GameTime(5, 11, 1, 6, 9, 0);
     }
 }

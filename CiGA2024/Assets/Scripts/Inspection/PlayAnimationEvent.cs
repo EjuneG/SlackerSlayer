@@ -4,7 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class PlayAnimationEvent : InspectionEvent
 {
-    public Animator animator => ActingEmployee.animator;
+    public Animator animator => ActingEmployee.CharacterAnimator;
     public string animationName;
     public TimePair EndTime;
 
@@ -19,7 +19,7 @@ public class PlayAnimationEvent : InspectionEvent
 
     private IEnumerator PlayAnimationForDuration()
     {
-        GameTime endTime = new GameTime(EndTime.hour, EndTime.minute);
+        GameTime endTime = new GameTime(EndTime.Hour, EndTime.Minute);
 
         while (TimeManager.Instance.CurrentTime < endTime && !isPaused)
         {

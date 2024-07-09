@@ -4,72 +4,63 @@ using UnityEngine;
 
 public class PlayerState : MonoBehaviour
 {
-    private static PlayerState _instance;
+    private static PlayerState instance;
+
     public static PlayerState Instance
     {
         get
         {
-            if (_instance == null)
+            if (instance == null)
             {
-                _instance = FindObjectOfType<PlayerState>();
-                if (_instance == null)
+                instance = FindObjectOfType<PlayerState>();
+                if (instance == null)
                 {
                     GameObject singleton = new GameObject(typeof(PlayerState).Name);
-                    _instance = singleton.AddComponent<PlayerState>();
+                    instance = singleton.AddComponent<PlayerState>();
+                    DontDestroyOnLoad(singleton);
                 }
             }
-            return _instance;
+            return instance;
         }
     }
-    [field : SerializeField]public List<UnleashedLimit> UnleashedLimits {get; private set; }
-
-
-    public void UnleashLimit(UnleashedLimit limit){
-        if(!UnleashedLimits.Contains(limit)){
-            UnleashedLimits.Add(limit);
-        }
-    }
+    //bad habit but saving time
+    public GameState CurrentGameState;
+   
+    
+    [field: SerializeField] public bool VisionUnlocked {get; set; }
+    [field: SerializeField] public bool HearingUnlocked {get; set;}
 
     public float Hatred;
     public int TotalMoney;
-}
+    public int TotalCorrectCatch;
+    public int TotalFalseAlarm;
+    public int TotalGoodFeedback;
+    public int TotalBadFeedback;
+    public bool CaughtBossKid;
 
-public enum UnleashedLimit{
-    Vision,
-    Hearing
-}
+    public int MissedSlacks;
 
- public interface IPlayerState
-    {
-        void EnterState();
-        void ExitState();
-}
-
-public class VisionBuffState : IPlayerState
-{
-    public void EnterState()
-    {
-        // Implement behavior when entering the Main Menu state
+    public void Reset(){
+        VisionUnlocked = false;
+        HearingUnlocked = false;
+        Hatred = 0;
+        TotalMoney = 0;
+        TotalCorrectCatch = 0;
+        TotalFalseAlarm = 0;
+        TotalGoodFeedback = 0;
+        TotalBadFeedback = 0;
     }
 
-    public void ExitState()
-    {
-        // Implement behavior when exiting the Main Menu state
-    }
-}
-
-public class HearingBuffState : IPlayerState
-{
-    public void EnterState()
-    {
-        // Implement behavior when entering the Main Menu state
-    }
-
-    public void ExitState()
-    {
-        // Implement behavior when exiting the Main Menu state
+    public void ResetGame(){
+        Reset();
+        TimeManager.Instance.Reset();
+    
     }
 }
 
+public enum GameState{
+    Inspecting,
+    Menu
+}
 
 

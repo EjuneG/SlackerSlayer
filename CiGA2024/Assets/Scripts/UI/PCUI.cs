@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class PCUI : MonoBehaviour
 {
-    public GameObject ruleBookPanel;
+    public Rulebook ruleBook;
     public GameObject desktopPanel;
     public GameObject inspectionViewPanel;
     public GameObject ruleBookButton;
     public GameObject InspectionButton;
-
-    public void OpenRuleBook(){
-
-    }
+    public GameObject CompanyIntro;
+    public UnlockDisplay unlockDisplay;
+    public InfoPop InfoPop;
 
     private void HideEverything(){
-        ruleBookPanel.SetActive(false);
+        ruleBook.CloseRuleBook();
         desktopPanel.SetActive(false);
         inspectionViewPanel.SetActive(false);
     }
@@ -25,12 +24,21 @@ public class PCUI : MonoBehaviour
     }
 
     public void ShowRuleBook(){
-        HideEverything();
-        ruleBookPanel.SetActive(true);
+        ruleBook.OpenRuleBook();
     }
 
     public void ShowInspectionView(){
         HideEverything();
+        if(AudioManager.Instance.IsBGMPlayingClip(AudioManager.Instance.BGM.audioClip)){
+            //don't play if already playing
+        }else{
+            AudioManager.Instance.PlayBGM(AudioManager.Instance.BGM.audioClip, AudioManager.Instance.BGM.volume, AudioManager.Instance.BGM.pitch);
+        }
+        TimeManager.Instance.StartTimer();
+
+        if(TimeManager.Instance.CurrentTime.GameDay == 1) InfoPop.ShowDay1Panel();
+        unlockDisplay.UpdateImages();
+
         inspectionViewPanel.SetActive(true);
     }
 
@@ -39,11 +47,15 @@ public class PCUI : MonoBehaviour
     }
 
     public void HideRuleBook(){
-        ruleBookPanel.SetActive(false);
+        ruleBook.CloseRuleBook();
     }
 
     public void HideInspectionView(){
         inspectionViewPanel.SetActive(false);
+    }
+
+    public void ShowCompanyIntro(){
+        CompanyIntro.SetActive(true);
     }
 
 

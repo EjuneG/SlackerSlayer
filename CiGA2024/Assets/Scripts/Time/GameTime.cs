@@ -12,6 +12,7 @@ public class GameTime : IComparable<GameTime>
     public int GameDay = 1;
     public int Hour = 0;
     public int Minute = 0;
+    public TimePair TimePair { get { return new TimePair { Hour = Hour, Minute = Minute }; } }
 
     [Header ("Time Speed")]
     public float TimeSpeed = 1.0f;
@@ -35,6 +36,24 @@ public class GameTime : IComparable<GameTime>
         DayOfTheWeek = 1;
         Hour = hour;
         Minute = minute;
+    }
+
+    public void ToNextDay(){
+        DayOfTheWeek++;
+        if(DayOfTheWeek > 7){
+            DayOfTheWeek = 1;
+        }
+        GameDay++;
+        Day++;
+
+        if(Day > 30){
+            Day = 1;
+            Month++;
+        }
+
+        Hour = 9;
+        Minute = 0;
+
     }
 
     //Comparators
@@ -196,12 +215,22 @@ public class GameTime : IComparable<GameTime>
             }
         }
     }
+
+    public float ToFloat(){
+        return Minute + Hour * 60f;
+    
+    }
 }
 
 [System.Serializable]
 public struct TimePair{
-    public int hour;
-    public int minute;
+    public int Hour;
+    public int Minute;
+
+    public TimePair(int hour, int minute){
+        Hour = hour;
+        Minute = minute;
+    }
 }
 
 

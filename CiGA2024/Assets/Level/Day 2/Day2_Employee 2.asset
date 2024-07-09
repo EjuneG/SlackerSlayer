@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49977ef112d061f48a15c70864bdb73c, type: 3}
+  m_Name: Day2_Employee 2
+  m_EditorClassIdentifier: 
+  Schedule:
+  - action: {fileID: 11400000, guid: a94db48c79367f7429cd68c6f2871083, type: 2}
+    StartTime:
+      Hour: 9
+      Minute: 0
+    EndTime:
+      Hour: 12
+      Minute: 0
+  - action: {fileID: 11400000, guid: cf1a434592003ef449450e5445a89740, type: 2}
+    StartTime:
+      Hour: 12
+      Minute: 0
+    EndTime:
+      Hour: 13
+      Minute: 0
+  - action: {fileID: 11400000, guid: cd26c5fe6722a6f408c29f1e456e0cc5, type: 2}
+    StartTime:
+      Hour: 13
+      Minute: 0
+    EndTime:
+      Hour: 14
+      Minute: 0
+  - action: {fileID: 11400000, guid: 42edca64c5c22ab43a7e145807bc987e, type: 2}
+    StartTime:
+      Hour: 14
+      Minute: 0
+    EndTime:
+      Hour: 17
+      Minute: 30
+  - action: {fileID: 11400000, guid: 4dd0e6dd63241d647b338389e84586c0, type: 2}
+    StartTime:
+      Hour: 17
+      Minute: 30
+    EndTime:
+      Hour: 19
+      Minute: 0
+  - action: {fileID: 11400000, guid: a94db48c79367f7429cd68c6f2871083, type: 2}
+    StartTime:
+      Hour: 19
+      Minute: 0
+    EndTime:
+      Hour: 20
+      Minute: 0

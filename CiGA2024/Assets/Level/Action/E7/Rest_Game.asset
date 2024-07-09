@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d33bac46c1ba5b143a7f1297ea79636c, type: 3}
+  m_Name: Rest_Game
+  m_EditorClassIdentifier: 
+  IsSlackingAction: 0
+  AnimationName: Slack
+  PCAnimationName: Slack3
+  SFX: {fileID: 8300000, guid: 8ab89d63543e2134897cc78ab3aeb554, type: 3}
+  volume: 0.6
+  pitch: 1
+  HasHint: 1
+  RequireHearing: 1

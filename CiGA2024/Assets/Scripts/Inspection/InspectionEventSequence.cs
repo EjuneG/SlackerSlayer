@@ -15,7 +15,7 @@ public class InspectionEventSequence : MonoBehaviour
     public float EventTimer { get; private set; }
     public bool SequenceCompleted = false;
     public Queue<InspectionEvent> EventsToPlay;
-    public Animator animator => ActingEmployee.animator;
+    public Animator animator => ActingEmployee.CharacterAnimator;
     InspectionEvent currentEvent;
 
     public void Initialize()
@@ -44,30 +44,30 @@ public class InspectionEventSequence : MonoBehaviour
         EventTimer = 0;
     }
 
-    public void Update()
-    {
-        if (eventTriggered && !SequenceCompleted)
-        {
-            EventTimer += Time.deltaTime;
-            if (EventsToPlay.Count == 0)
-            {
-                if(currentEvent != null && currentEvent.Completed)
-                {
-                    Debug.Log("Sequence Completed");
-                    SequenceCompleted = true;
-                }
-            }
-            else
-            {
-                currentEvent = EventsToPlay.Peek();
-                currentEvent.CheckAndTrigger();
-                if (currentEvent.eventTriggered)
-                {
-                    EventsToPlay.Dequeue();
-                }
-            }
-        }
-    }
+    // public void Update()
+    // {
+    //     if (eventTriggered && !SequenceCompleted)
+    //     {
+    //         EventTimer += Time.deltaTime;
+    //         if (EventsToPlay.Count == 0)
+    //         {
+    //             if(currentEvent != null && currentEvent.Completed)
+    //             {
+    //                 Debug.Log("Sequence Completed");
+    //                 SequenceCompleted = true;
+    //             }
+    //         }
+    //         else
+    //         {
+    //             currentEvent = EventsToPlay.Peek();
+    //             currentEvent.CheckAndTrigger();
+    //             if (currentEvent.eventTriggered)
+    //             {
+    //                 EventsToPlay.Dequeue();
+    //             }
+    //         }
+    //     }
+    // }
 
     public void CheckAndTrigger(GameTime currentTime)
     {
@@ -88,11 +88,10 @@ public class InspectionEventSequence : MonoBehaviour
         }
     }
 
-    public void Caught(){
-        SlackEventCaught = true;
-        ActingEmployee.IsSlacking = false;
-        SequenceCompleted = true;
-        currentEvent.Pause();
-        ActingEmployee.WorkAfterCaught();
-    }
+    // public void Caught(){
+    //     SlackEventCaught = true;
+    //     ActingEmployee.IsSlacking = false;
+    //     SequenceCompleted = true;
+    //     currentEvent.Pause();
+    // }
 }

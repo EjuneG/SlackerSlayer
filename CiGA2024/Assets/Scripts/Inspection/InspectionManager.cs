@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class InspectionManager : MonoBehaviour
 {
@@ -18,87 +19,57 @@ public class InspectionManager : MonoBehaviour
         }
     }
 
-    public Queue<InspectionEventSequence> EventSequenceQueue; // Saves the events that will happen in the level
-    public List<InspectionEventSequence> EventSequences; // Assign this in the Inspector
-    List<InspectionEventSequence> onGoingEventSequences;
 
     [SerializeField] GameObject EmployeeParent;
+    [SerializeField] List<EmployeeSlot> Employees;
     public List<EmployeeSlot> EmployeeSlots { get; private set; } // Each slot has an Employee and its respective scene
 
     [SerializeField] SlackOffDecisionPanel decisionPanel;
     [SerializeField] SlackerCamera slackerCam;
     [SerializeField] Transform GameLevelParent;
 
-    [SerializeField]private float falseAlarmPenaltyCooldown = 10;
+    [SerializeField] private float falseAlarmPenaltyCooldown = 10;
     private float currentFalseAlarmPenaltyCooldown = 0;
+
+    [SerializeField] Sound caughtSucessSound;
+    [SerializeField] Sound falseAlarmSound;
 
     void Update()
     {
-        if (TimeManager.Instance.IsRunning)
+        if (falseAlarmPenaltyCooldown > 0)
         {
-            if (EventSequenceQueue.Count > 0)
-            {
-                InspectionEventSequence currentSequence = EventSequenceQueue.Peek();
-                currentSequence.CheckAndTrigger(TimeManager.Instance.CurrentTime);
-                if (currentSequence.eventTriggered)
-                {
-                    onGoingEventSequences.Add(currentSequence);
-                    EventSequenceQueue.Dequeue();
-                }
-            }
-
-            for (int i = onGoingEventSequences.Count - 1; i >= 0; i--)
-            {
-                InspectionEventSequence sequence = onGoingEventSequences[i];
-                sequence.Update();
-                if (sequence.SequenceCompleted)
-                {
-                    onGoingEventSequences.RemoveAt(i);
-                }
-            }
-
-            if(falseAlarmPenaltyCooldown > 0){
-                falseAlarmPenaltyCooldown -= Time.deltaTime;
-            }
+            currentFalseAlarmPenaltyCooldown -= Time.deltaTime;
         }
     }
 
-    void Start()
+
+    public void InitializeDay(int day)
     {
-        InitializeLevelEmployees();
-        InitializeDay();
+        InitializeLevelEmployees(day);
         slackerCam.Initialize();
     }
 
-    void InitializeDay()
-    {
-        EventSequences = new List<InspectionEventSequence>();
-        foreach (Transform child in GameLevelParent)
-        {
-            InspectionEventSequence sequence = child.GetComponent<InspectionEventSequence>();
-            if (sequence != null)
-            {
-                EventSequences.Add(sequence);
-            }
-        }
-        foreach (InspectionEventSequence sequence in EventSequences)
-        {
-            sequence.Initialize();
-        }
-        onGoingEventSequences = new List<InspectionEventSequence>();
-        //Sort event sequences by their trigger time, and then add them to the event queue, so they are triggered in order
-        EventSequenceQueue = new Queue<InspectionEventSequence>(EventSequences.OrderBy(x => x.TriggerTime));
-    }
-
-    void InitializeLevelEmployees()
+    void InitializeLevelEmployees(int day)
+    //on day 1, initialize first 5 employees, on day 2, have 3 more, day 3, have all
     {
         EmployeeSlots = new List<EmployeeSlot>();
-        for (int i = 0; i < EmployeeParent.transform.childCount; i++)
+        int employeeCount = 5;
+        if (day == 2)
         {
-            EmployeeSlot slot = EmployeeParent.transform.GetChild(i).GetComponent<EmployeeSlot>();
+            employeeCount = 7;
+        }
+        else if (day == 3)
+        {
+            employeeCount = EmployeeParent.transform.childCount;
+        }
+        for (int i = 0; i < employeeCount; i++)
+        {
+            EmployeeSlot slot = Employees[i];
             slot.Index = i;
             EmployeeSlots.Add(slot);
+            slot.StartDay();
         }
+
     }
 
     public void ShowDecisionPanel()
@@ -115,32 +86,55 @@ public class InspectionManager : MonoBehaviour
     {
         if (slackerCam.CurrentEmployeeSlot.IsSlacking)
         {
-            //caught slacker
-            RewardCaughtSlacker();
-            Debug.Log("Caught Slacker!");
-            foreach (InspectionEventSequence sequence in onGoingEventSequences)
+            if (slackerCam.CurrentEmployeeSlot.CurrentAction.SlackIsCaught)
             {
-                if (sequence.ActingEmployee.Index == slackerCam.CurrentEmployeeSlot.Index)
-                {
-                    sequence.Caught();
-                }
+                //already caught, return
+                return;
             }
-        }else{
+            //caught slacker
+            if (slackerCam.CurrentEmployeeSlot.IsVIP)
+            {
+                PlayerState.Instance.CaughtBossKid = true;
+                //no reward
+            }
+            else
+            {
+                RewardCaughtSlacker();
+                Debug.Log("Caught Slacker!");
+                caughtSucessSound.Play();
+                slackerCam.CurrentEmployeeSlot.Caught();
+            }
+
+            // foreach (InspectionEventSequence sequence in onGoingEventSequences)
+            // {
+            //     if (sequence.ActingEmployee.Index == slackerCam.CurrentEmployeeSlot.Index)
+            //     {
+            //         sequence.Caught();
+            //     }
+            // }
+        }
+        else
+        {
             //false alarm
             Debug.Log("False Alarm");
-            if(currentFalseAlarmPenaltyCooldown <= 0){
+            if (currentFalseAlarmPenaltyCooldown <= 0)
+            {
+                falseAlarmSound.Play();
                 LevelManager.Instance.DailyEarnedMoney -= 50;
                 currentFalseAlarmPenaltyCooldown = falseAlarmPenaltyCooldown;
             }
         }
     }
 
-    private void RewardCaughtSlacker(){
+    private void RewardCaughtSlacker()
+    {
         LevelManager.Instance.DailyEarnedMoney += 100;
         LevelManager.Instance.DailySlackerCaught++;
+        PlayerState.Instance.TotalCorrectCatch++;
     }
 
-    private void PenalizeFalseAlarm(){
+    private void PenalizeFalseAlarm()
+    {
         LevelManager.Instance.DailyPenaltyDueToFalseAlarm += 50;
     }
 

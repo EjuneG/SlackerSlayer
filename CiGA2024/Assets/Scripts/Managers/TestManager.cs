@@ -37,14 +37,4 @@ public class TestManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    void Start(){
-        SceneManager.Instance.StartTestWithDesktop();
-    }
-
-    public void TestStartDayOne(){
-        TimeManager.Instance.StartTimer();
-        Debug.Log("Day 1 started");
-        
-    }
 }

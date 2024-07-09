@@ -6,15 +6,6 @@ public class InspectionScene : MonoBehaviour
 {
     [SerializeField]Transform NonVisionBuffVersion;
     [SerializeField]Transform VisionBuffVersion;
-    public void LoadScene()
-    {
-        gameObject.SetActive(true);
-        if(PlayerState.Instance.UnleashedLimits.Contains(UnleashedLimit.Vision)){
-            ShowVisionBuffVersion();
-        }else{
-            ShowNonVisionBuffVersion();
-        }
-    }
 
     public void CloseScene()
     {

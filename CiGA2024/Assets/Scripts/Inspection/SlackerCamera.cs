@@ -51,6 +51,9 @@ public class SlackerCamera : MonoBehaviour
 
     private void LookAtEmployee(EmployeeSlot employeeSlot){
         CurrentEmployeeSlot.IsLookedAt = false;
+        CurrentEmployeeSlot.MuteAudioSource();
+
         employeeSlot.IsLookedAt = true;
+        employeeSlot.UnmuteAudioSource();
     }
 }
